@@ -7,7 +7,7 @@ export class UserRepository implements IUserRepository {
   async create(user: User): Promise<User> {
     const newUser = await UserModel.create(user)
     return {
-      _id: newUser._id.toString(),
+      id: newUser._id.toString(),
       email: newUser.email,
       password: newUser.password,
       imageUrl: newUser.imageUrl,
@@ -27,7 +27,7 @@ export class UserRepository implements IUserRepository {
     if (!user) return null
 
     return {
-      _id: user._id.toString(),
+      id: user._id.toString(),
       email: user.email,
       password: user.password,
       imageUrl: user.imageUrl,
@@ -56,7 +56,7 @@ export class UserRepository implements IUserRepository {
     if (!user) return null
 
     return {
-      _id: user._id.toString(),
+      id: user._id.toString(),
       email: user.email,
       password: user.password,
       imageUrl: user.imageUrl,
