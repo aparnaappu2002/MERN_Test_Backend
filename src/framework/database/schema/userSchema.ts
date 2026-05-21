@@ -1,4 +1,5 @@
 import { Schema } from "mongoose"
+import { KycStatus } from "../../../domain/enums/KycStatus"
 
 export const userSchema = new Schema(
   {
@@ -27,7 +28,7 @@ export const userSchema = new Schema(
     },
     kycStatus: {
       type: String,
-      enum: ["pending", "submitted", "verified", "rejected"],
+      enum: Object.values(KycStatus),
       default: "pending",
     },
 
