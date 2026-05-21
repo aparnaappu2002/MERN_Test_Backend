@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { ISubmitKycUseCase } from "../../domain/interfaces/useCaseInterface/IsubmitKycUseCase"
 import { HttpStatus } from "../../domain/enums/HttpStatus"
 import { IGetKycStatusUseCase } from "../../domain/interfaces/useCaseInterface/IgetKycStatusUseCase"
+import { Messages } from "../../domain/enums/Messages"
 export class UserKycController {
 
   private submitKycUseCase: ISubmitKycUseCase
@@ -22,7 +23,7 @@ export class UserKycController {
 
       if (!imageUrl || !audioUrl) {
         res.status(HttpStatus.BAD_REQUEST).json({
-          message: "KYC image and audio are required"
+          message: Messages.KYC_REQUIRED
         })
         return
       }
@@ -34,7 +35,7 @@ export class UserKycController {
       )
 
       res.status(HttpStatus.OK).json({
-        message: "KYC submitted successfully"
+        message: Messages.KYC_SUCCESS
       })
 
     } catch (error: any) {

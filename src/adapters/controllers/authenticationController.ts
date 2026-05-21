@@ -5,6 +5,7 @@ import { IJwtService } from "../../domain/interfaces/serviceInterface/IjwtServic
 import { IJwtPayload } from "../../domain/interfaces/serviceInterface/IjwtPayload"
 import { HttpStatus } from "../../domain/enums/HttpStatus"
 import { setCookie } from "../../framework/service/tokenCookieSetting"
+import { Messages } from "../../domain/enums/Messages"
 
 export class UserAuthController {
 
@@ -32,7 +33,7 @@ export class UserAuthController {
       console.log(`User registered successfully - email: ${email}`)
 
       res.status(HttpStatus.CREATED).json({
-        message: "User registered successfully",
+        message: Messages.REGISTER_SUCCESS,
         user
       })
 
@@ -41,7 +42,7 @@ export class UserAuthController {
       console.error("Error while registering user:", error)
 
       res.status(HttpStatus.BAD_REQUEST).json({
-        message: error.message || "Registration failed"
+        message: error.message || Messages.REGISTER_FAILED
       })
 
     }
@@ -63,7 +64,7 @@ export class UserAuthController {
       }
 
       const payload: IJwtPayload = {
-        userId: user._id?.toString() || "",
+        userId: user.id?.toString() || "",
         email: user.email
       }
 
@@ -74,7 +75,7 @@ export class UserAuthController {
       console.log(`User login successful - email: ${email}`)
 
       res.status(HttpStatus.OK).json({
-        message: "Login successful",
+        message: Messages.LOGIN_SUCCESS,
         user,
         token
       })
@@ -84,7 +85,7 @@ export class UserAuthController {
       console.error("Error while user login:", error)
 
       res.status(HttpStatus.UNAUTHORIZED).json({
-        message: error.message || "Login failed"
+        message: error.message || Messages.LOGIN_ERROR
       })
 
     }

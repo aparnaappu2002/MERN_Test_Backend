@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IGetDashboardUseCase } from "../../domain/interfaces/useCaseInterface/IgetDashboardUseCase";
 import { HttpStatus } from "../../domain/enums/HttpStatus";
+import { Messages } from "../../domain/enums/Messages";
 
 export class UserDashboardController {
   private getDashboardUseCase: IGetDashboardUseCase;
@@ -23,7 +24,7 @@ export class UserDashboardController {
     } catch (error: any) {
       console.error("Dashboard fetch error:", error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message || "Failed to fetch dashboard data",
+        message: error.message || Messages.DASHBOARD_DATA_ERROR,
       });
     }
   }
