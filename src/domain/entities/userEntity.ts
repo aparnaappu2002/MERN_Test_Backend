@@ -9,3 +9,5 @@ export interface User {
   updatedAt?: Date,
   kycStatus?:KycStatus
 }
+
+export type CreateUserInput = Omit<User, "id">

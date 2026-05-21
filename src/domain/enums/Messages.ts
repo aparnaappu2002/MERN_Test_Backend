@@ -23,4 +23,5 @@ export enum Messages {
   KYC_SUCCESS="KYC submitted successfully",
   KYC_FAILED="KYC submission failed",
   KYC_REQUIRED="KYC image and audio are required",
+  KYC_STATUS_ERROR="KYC status fetching failed"
 }

@@ -6,6 +6,8 @@ import { IJwtPayload } from "../../domain/interfaces/serviceInterface/IjwtPayloa
 import { HttpStatus } from "../../domain/enums/HttpStatus"
 import { setCookie } from "../../framework/service/tokenCookieSetting"
 import { Messages } from "../../domain/enums/Messages"
+import { mapUserToDTO } from "../../useCases/mappers/userMapper"
+import { handleErrorResponse,CustomError } from "../../framework/service/errorHandler"
 
 export class UserAuthController {
 
@@ -28,22 +30,32 @@ export class UserAuthController {
 
       const { email, password } = req.body
 
+      if (!email || !password) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Email and password are required")
+      }
+
+      if (typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email)) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Invalid email format")
+      }
+
+      if (typeof password !== "string" || password.length < 6) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Password must be at least 6 characters")
+      }
+
+
       const user = await this.registerUseCase.registerUser(email, password)
 
       console.log(`User registered successfully - email: ${email}`)
 
       res.status(HttpStatus.CREATED).json({
         message: Messages.REGISTER_SUCCESS,
-        user
+        user:mapUserToDTO(user)
       })
 
-    } catch (error: any) {
+    } catch (error) {
 
-      console.error("Error while registering user:", error)
+      handleErrorResponse(req, res, error, Messages.REGISTER_FAILED)
 
-      res.status(HttpStatus.BAD_REQUEST).json({
-        message: error.message || Messages.REGISTER_FAILED
-      })
 
     }
   }
@@ -53,6 +65,19 @@ export class UserAuthController {
     try {
 
       const { email, password } = req.body
+
+      if (!email || !password) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Email and password are required")
+      }
+
+      if (typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email)) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Invalid email format")
+      }
+
+      if (typeof password !== "string" || password.length < 6) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Password must be at least 6 characters")
+      }
+
 
       const user = await this.loginUseCase.loginUser(email, password)
 
@@ -76,17 +101,15 @@ export class UserAuthController {
 
       res.status(HttpStatus.OK).json({
         message: Messages.LOGIN_SUCCESS,
-        user,
+        user:mapUserToDTO(user),
         token
       })
 
-    } catch (error: any) {
+    } catch (error) {
+      
 
-      console.error("Error while user login:", error)
+      handleErrorResponse(req, res, error, Messages.LOGIN_ERROR)
 
-      res.status(HttpStatus.UNAUTHORIZED).json({
-        message: error.message || Messages.LOGIN_ERROR
-      })
 
     }
 

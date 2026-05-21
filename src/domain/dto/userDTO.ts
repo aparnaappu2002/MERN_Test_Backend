@@ -4,6 +4,7 @@ export interface UserDTO {
   imageUrl?: string;
   audioUrl?: string;
   kycStatus?: string;
-  createdAt?: string;  
+  createdAt?: string;
+  updatedAt?:string  
 
 }

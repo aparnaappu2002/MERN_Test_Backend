@@ -1,4 +1,5 @@
+import { IJwtPayload } from "./IjwtPayload"
 export interface IJwtService {
   generateToken(payload: object): string
-  verifyToken(token: string): any
+  verifyToken(token: string): IJwtPayload | null
 }

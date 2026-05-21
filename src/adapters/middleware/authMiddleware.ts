@@ -23,7 +23,7 @@ export const authMiddleware = (
     req.user = verified;
 
     next();
-  } catch (err) {
+  } catch  {
     res.status(400).json({ message: "Invalid token" });
   }
 };

@@ -3,6 +3,8 @@ import { ISubmitKycUseCase } from "../../domain/interfaces/useCaseInterface/Isub
 import { HttpStatus } from "../../domain/enums/HttpStatus"
 import { IGetKycStatusUseCase } from "../../domain/interfaces/useCaseInterface/IgetKycStatusUseCase"
 import { Messages } from "../../domain/enums/Messages"
+import { IJwtPayload } from "../../domain/interfaces/serviceInterface/IjwtPayload"
+import { handleErrorResponse,CustomError } from "../../framework/service/errorHandler"
 export class UserKycController {
 
   private submitKycUseCase: ISubmitKycUseCase
@@ -17,9 +19,27 @@ export class UserKycController {
 
     try {
 
-      const userId = (req as any).user.userId
+      const userId = (req as Request & { user: IJwtPayload }).user.userId
+
+      if (!userId) {
+        throw new CustomError(HttpStatus.UNAUTHORIZED, "Unauthorized")
+      }
+
 
       const { imageUrl, audioUrl } = req.body
+
+      if (!imageUrl || !audioUrl) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, Messages.KYC_REQUIRED)
+      }
+
+      if (typeof imageUrl !== "string" ) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Invalid image URL")
+      }
+
+      if (typeof audioUrl !== "string" ) {
+        throw new CustomError(HttpStatus.BAD_REQUEST, "Invalid audio URL")
+      }
+
 
       if (!imageUrl || !audioUrl) {
         res.status(HttpStatus.BAD_REQUEST).json({
@@ -38,13 +58,10 @@ export class UserKycController {
         message: Messages.KYC_SUCCESS
       })
 
-    } catch (error: any) {
+    } catch (error) {
 
-      console.error("KYC submit error:", error)
+      handleErrorResponse(req, res, error, Messages.KYC_FAILED)
 
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message
-      })
 
     }
 
@@ -52,15 +69,18 @@ export class UserKycController {
 
   async getKycStatus(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req as any).user.userId;
+      const userId = (req as Request & { user: IJwtPayload }).user.userId
+
+      if (!userId) {
+        throw new CustomError(HttpStatus.UNAUTHORIZED, "Unauthorized")
+      }
+
       const result = await this.getKycStatusUseCase.getKycStatus(userId);
 
       res.status(HttpStatus.OK).json(result);
-    } catch (error: any) {
-      console.error("Error fetching KYC status:", error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message,
-      });
+    } catch (error) {
+      handleErrorResponse(req, res, error, Messages.KYC_STATUS_ERROR)
+
     }
   }
 
